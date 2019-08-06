@@ -33,6 +33,9 @@ service Eos {
   // Replies to an insert
   rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}  
   rpc FileInsert (FileInsertRequest) returns (InsertReply) {}  
+
+  // Manila Driver
+  rpc ManilaServerRequest (ManilaRequest) returns (ManilaResponse) {}  
 }
 
 message PingRequest {
@@ -122,4 +125,35 @@ message MDResponse {
   TYPE type = 1;
   FileMdProto fmd = 2;
   ContainerMdProto cmd = 3;
+}
+
+enum MANILA_REQUEST_TYPE {
+   CREATE_SHARE = 0;
+   DELETE_SHARE = 1;
+   EXTEND_SHARE = 2;
+   SHRINK_SHARE = 3;
+   MANAGE_EXISTING = 4;
+   UNMANAGE = 5;
+   GET_USED_CAPACITY = 6;
+   GET_TOTAL_CAPACITY = 7;
+}
+
+message ManilaRequest {
+   MANILA_REQUEST_TYPE request_type = 1;
+   string auth_key = 2;
+   string protocol = 3;
+   string share_name = 4;
+   string description = 5;
+   string share_id = 6;
+   string share_group_id = 7;
+   int32 quota = 8;
+   string creator = 9;
+   string egroup = 10;
+   string admin_egroup = 11;
+   string share_location = 12;
+}
+
+message ManilaResponse {
+   string msg = 1;
+   int32 code = 2;
 }
