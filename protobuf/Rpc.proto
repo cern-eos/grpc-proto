@@ -134,8 +134,7 @@ enum MANILA_REQUEST_TYPE {
    SHRINK_SHARE = 3;
    MANAGE_EXISTING = 4;
    UNMANAGE = 5;
-   GET_USED_CAPACITY = 6;
-   GET_TOTAL_CAPACITY = 7;
+   GET_CAPACITIES = 6;
 }
 
 message ManilaRequest {
@@ -154,6 +153,11 @@ message ManilaRequest {
 }
 
 message ManilaResponse {
-   string msg = 1;
-   int32 code = 2;
+   string msg = 1; //for generic messages
+   int32 code = 2; // < 1 is an error -- > 1 is OK
+   int64 total_used = 3;
+   int64 total_capacity = 4;
+   int64 new_share_quota = 5;
+   string new_share_path = 6;
+
 }
