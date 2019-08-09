@@ -27,12 +27,48 @@ service Eos {
   // Replies to a ping
   rpc Ping (PingRequest) returns (PingReply) {}  
 
+  // ---------------------------------------------------------------------
+  // NAMESPACE
+  // ---------------------------------------------------------------------
+
   // Replies to MD requests with a stream 
   rpc MD (MDRequest) returns (stream MDResponse) {}
 
   // Replies to an insert
   rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}  
   rpc FileInsert (FileInsertRequest) returns (InsertReply) {}  
+
+  // Replies to Find requests with a stream 
+  rpc Find (FindRequest) returns (stream MDResponse) {}
+
+  // Mkdir
+  rpc Mkdir (NSRequest) returns (ErrorResponse) {}	
+
+  // Rmdir
+  rpc Rmdir (NSRequest) returns (ErrorResponse) {}
+
+  // Touch
+  rpc Touch (NSRequest) returns (ErrorResponse) {}
+
+  // Rm
+  rpc Rm (NSRequest)  returns (ErrorResponse) {}
+
+  // Rename
+  rpc Rename (NSRequest) returns (ErrorResponse) {}
+
+  // Symlink
+  rpc Symlink(NSRequest) returns (ErrorResponse) {}
+
+  // Version
+  rpc Version(VersionRequest) returns (VersionResponse) {}
+
+  // Recycle
+  rpc Recycle(RecycleRequest) returns (RecycleResponse) {}
+
+
+  // ---------------------------------------------------------------------
+  // OPENSTACK
+  // ---------------------------------------------------------------------
 
   // Manila Driver
   rpc ManilaServerRequest (ManilaRequest) returns (ManilaResponse) {}  
@@ -46,6 +82,10 @@ message PingRequest {
 message PingReply {
   bytes message = 1;
 }
+
+// ---------------------------------------------------------------------
+// NAMESPACE
+// ---------------------------------------------------------------------
 
 message ContainerInsertRequest {
   repeated ContainerMdProto container = 1;
@@ -121,11 +161,51 @@ message MDRequest {
   string authkey = 3;
 }
 
+message FindRequest {
+  TYPE type = 1;
+  MDId id = 2;
+  string authkey = 3;	
+}
+
+message NSRequest {
+  MDId id = 1;
+  string authkey = 2;
+  MDId target = 3;
+}
+
+message VersionRequest {
+  MDId id = 1;
+  string authkey = 2;
+}
+
+message RecycleRequest {
+  MDId id = 1;
+  string authkey = 2;
+}
+
 message MDResponse {
   TYPE type = 1;
   FileMdProto fmd = 2;
   ContainerMdProto cmd = 3;
 }
+
+message ErrorResponse {
+  int32 code = 1;
+  string msg = 2;	
+}
+
+message VersionResponse {
+  ErrorResponse ret = 1;
+}
+
+message RecycleResponse {
+  ErrorResponse ret = 1;
+}
+
+
+// ---------------------------------------------------------------------	
+// OPENSTACK
+// ---------------------------------------------------------------------
 
 enum MANILA_REQUEST_TYPE {
    CREATE_SHARE = 0;
@@ -161,3 +241,4 @@ message ManilaResponse {
    string new_share_path = 6;
 
 }
+
