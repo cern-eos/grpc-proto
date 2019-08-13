@@ -34,37 +34,15 @@ service Eos {
   // Replies to MD requests with a stream 
   rpc MD (MDRequest) returns (stream MDResponse) {}
 
+  // Replies to Find requests with a stream
+  rpc Find (FindRequest) returns (stream MDResponse) {}
+
   // Replies to an insert
   rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}  
   rpc FileInsert (FileInsertRequest) returns (InsertReply) {}  
 
-  // Replies to Find requests with a stream 
-  rpc Find (FindRequest) returns (stream MDResponse) {}
 
-  // Mkdir
-  rpc Mkdir (NSRequest) returns (ErrorResponse) {}	
-
-  // Rmdir
-  rpc Rmdir (NSRequest) returns (ErrorResponse) {}
-
-  // Touch
-  rpc Touch (NSRequest) returns (ErrorResponse) {}
-
-  // Rm
-  rpc Rm (NSRequest)  returns (ErrorResponse) {}
-
-  // Rename
-  rpc Rename (NSRequest) returns (ErrorResponse) {}
-
-  // Symlink
-  rpc Symlink(NSRequest) returns (ErrorResponse) {}
-
-  // Version
-  rpc Version(VersionRequest) returns (VersionResponse) {}
-
-  // Recycle
-  rpc Recycle(RecycleRequest) returns (RecycleResponse) {}
-
+  rpc Exec (NSRequest) returns (NSResponse) {}
 
   // ---------------------------------------------------------------------
   // OPENSTACK
@@ -149,38 +127,25 @@ message ContainerMdProto {
 
 enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2;}  
 
+message RoleId {
+  uint64 uid = 1;
+  uint64 gid = 2;
+  string username = 3;
+  string groupname = 4;
+}
+
 message MDId {
   bytes path = 1;
   fixed64 id = 2;
   fixed64 ino = 3;
+  TYPE type = 4;
 }
 
 message MDRequest {
   TYPE type = 1;
   MDId id = 2;
   string authkey = 3;
-}
-
-message FindRequest {
-  TYPE type = 1;
-  MDId id = 2;
-  string authkey = 3;	
-}
-
-message NSRequest {
-  MDId id = 1;
-  string authkey = 2;
-  MDId target = 3;
-}
-
-message VersionRequest {
-  MDId id = 1;
-  string authkey = 2;
-}
-
-message RecycleRequest {
-  MDId id = 1;
-  string authkey = 2;
+  RoleId role = 4;
 }
 
 message MDResponse {
@@ -189,19 +154,115 @@ message MDResponse {
   ContainerMdProto cmd = 3;
 }
 
-message ErrorResponse {
-  int32 code = 1;
-  string msg = 2;	
+message FindRequest {
+  TYPE type = 1;
+  MDId id = 2;
+  RoleId role = 3;	
+  string authkey = 4;
+  uint64 maxdepth = 5;
 }
 
-message VersionResponse {
-  ErrorResponse ret = 1;
+message NSRequest {
+  message MkdirRequest {
+    MDId id = 1;
+    bool recursive = 2;
+    int64 mode = 3;
+  }
+  
+  message RmdirRequest {
+    MDId id = 1;
+  }
+ 
+  message TouchRequest {
+    MDId id = 1;
+  }
+
+  message UnlinkRequest {
+    MDId id = 1;
+    bool norecycle = 3;
+  }
+
+  message RmRequest {
+    MDId id = 1;
+    bool recursive = 2;
+    bool norecycle = 3;
+  }
+
+  message RenameRequest {
+    MDId id = 1;
+    bytes target = 2;
+  }
+
+  message SymlinkRequest {
+    MDId id = 1;
+    bytes target = 2;
+  }
+
+  message VersionRequest {
+    MDId id = 1;
+  }
+
+  message RecycleRequest {
+    MDId id = 1;
+  }
+
+  message SetXAttrRequest {
+    MDId id = 1;
+    map<string, bytes> xattrs = 2;
+    bool recursive = 3;
+  }
+
+  message ChownRequest {
+    MDId id = 1;
+    RoleId owner = 2;  
+  }
+
+  message ChmodRequest {
+    MDId id = 1;
+    int64 mode = 2;
+  }
+
+  string authkey = 1;
+  RoleId role = 2;
+  // Actual request data object
+  oneof command {
+    MkdirRequest mkdir       = 21;
+    RmdirRequest rmdir       = 22;
+    TouchRequest touch       = 23;
+    UnlinkRequest unlink     = 24;
+    RmRequest rm             = 25;
+    RenameRequest rename     = 26;
+    SymlinkRequest symlink   = 27;
+    VersionRequest version   = 28;
+    RecycleRequest recycle   = 29;
+    SetXAttrRequest xattr    = 30;
+    ChownRequest chown       = 31;
+    ChmodRequest chmod       = 32;
+  }
 }
 
-message RecycleResponse {
-  ErrorResponse ret = 1;
-}
 
+message NSResponse 
+{
+  message ErrorResponse {
+    int64 code = 1;
+    string msg = 2;	
+  }
+
+  message VersionResponse {
+    int64 code = 1;
+    string msg = 2;	
+  }
+
+  message RecycleResponse {
+    int64 code = 1;
+    string msg = 2;	
+  }
+
+  ErrorResponse       error = 1;
+  VersionResponse     version = 2;
+  RecycleResponse     recycle = 3;
+}
 
 // ---------------------------------------------------------------------	
 // OPENSTACK
