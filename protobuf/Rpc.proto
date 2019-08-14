@@ -276,6 +276,24 @@ enum MANILA_REQUEST_TYPE {
    MANAGE_EXISTING = 4;
    UNMANAGE = 5;
    GET_CAPACITIES = 6;
+/* EXTRA FUNCTIONS NOT IMPLEMENTED */
+   /*
+   CREATE_SNAPSHOT = 7;
+   DELETE_SNAPSHOT = 8;
+   CREATE_SHARE_FROM_SNAPSHOT = 9;
+   ENSURE_SHARE = 10;
+   ALLOW_ACCESS = 11;
+   DENY_ACCESS = 12;
+   GET_SHARE_STATS = 13;
+   DO_SETUP = 14;
+   SETUP_SERVER = 15;
+   TEARDOWN_SERVER = 16;
+   GET_NETWORK_ALLOCATIONS_NUMBER = 17;
+   VERIFY_SHARE_SERVER_HANDLING = 18;
+   CREATE_SHARE_GROUP = 19;
+   DELETE_SHARE_GROUP = 20;
+   */
+
 }
 
 message ManilaRequest {
@@ -290,7 +308,8 @@ message ManilaRequest {
    string creator = 9;
    string egroup = 10;
    string admin_egroup = 11;
-   string share_location = 12;
+   string share_host = 12;
+   string share_location = 13;
 }
 
 message ManilaResponse {
