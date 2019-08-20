@@ -68,6 +68,7 @@ message PingReply {
 message ContainerInsertRequest {
   repeated ContainerMdProto container = 1;
   string authkey = 2;
+  bool inherit_md = 3;
 }
 
 message FileInsertRequest {
