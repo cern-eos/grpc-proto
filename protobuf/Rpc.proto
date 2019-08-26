@@ -142,11 +142,41 @@ message MDId {
   TYPE type = 4;
 }
 
+message Limit {
+  bool zero = 1;
+  uint64 min = 2;
+  uint64 max = 3;
+}
+
+message MDSelection {
+  bool select = 1;
+  Limit ctime = 2;
+  Limit mtime = 3;
+  Limit stime = 4;
+  Limit size = 5;
+  Limit treesize = 6;
+  Limit children = 7;
+  Limit locations = 8;
+  Limit unlinked_locations = 9;
+  uint64 layoutid = 10;
+  uint64 flags = 11;
+  bool symlink = 12;
+  Checksum checksum = 13;
+  uint32 owner = 14;
+  uint32 group = 15;
+  bool owner_root = 16;
+  bool group_root = 17;
+  bytes regexp_filename = 18;
+  bytes regexp_dirname = 19;
+  map<string, bytes> xattr = 20;
+}
+
 message MDRequest {
   TYPE type = 1;
   MDId id = 2;
   string authkey = 3;
   RoleId role = 4;
+  MDSelection selection = 5;
 }
 
 message MDResponse {
@@ -161,6 +191,7 @@ message FindRequest {
   RoleId role = 3;	
   string authkey = 4;
   uint64 maxdepth = 5;
+  MDSelection selection = 6;
 }
 
 message NSRequest {
