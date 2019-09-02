@@ -231,7 +231,14 @@ message NSRequest {
   }
 
   message VersionRequest {
-    MDId id = 1;
+    enum VERSION_CMD {
+     CREATE= 0;
+     PURGE = 1;
+     LIST = 2;
+   }
+   MDId id = 1;
+   VERSION_CMD cmd = 2;
+   int32 maxversion = 3;
   }
 
   message RecycleRequest {
@@ -282,8 +289,13 @@ message NSResponse
   }
 
   message VersionResponse {
+    message VersionInfo {
+      MDId   id = 1;
+      Time   mtime = 2;
+    }
     int64 code = 1;
     string msg = 2;	
+    repeated VersionInfo versions = 3;
   }
 
   message RecycleResponse {
