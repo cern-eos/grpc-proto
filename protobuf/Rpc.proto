@@ -249,6 +249,7 @@ message NSRequest {
     MDId id = 1;
     map<string, bytes> xattrs = 2;
     bool recursive = 3;
+    repeated string keystodelete = 4;
   }
 
   message ChownRequest {
