@@ -262,6 +262,25 @@ message NSRequest {
     int64 mode = 2;
   }
 
+  message AclRequest {
+    enum ACL_COMMAND {
+      NONE = 0;
+      MODIFY = 1;
+      LIST   = 2;
+    }
+
+    enum ACL_TYPE {
+      USER_ACL = 0;
+      SYS_ACL = 1;
+    }
+
+    MDId id = 1;
+    ACL_COMMAND cmd = 2;
+    bool recursive = 3;
+    ACL_TYPE type = 4;
+    string rule    = 5;
+  }
+
   string authkey = 1;
   RoleId role = 2;
   // Actual request data object
@@ -278,6 +297,7 @@ message NSRequest {
     SetXAttrRequest xattr    = 30;
     ChownRequest chown       = 31;
     ChmodRequest chmod       = 32;
+    AclRequest acl           = 33;
   }
 }
 
@@ -304,9 +324,16 @@ message NSResponse
     string msg = 2;	
   }
 
+  message AclResponse {
+    int64 code = 1;
+    string msg = 2;	
+    string rule = 3;
+  }
+
   ErrorResponse       error = 1;
   VersionResponse     version = 2;
   RecycleResponse     recycle = 3;
+  AclResponse         acl = 4;
 }
 
 // ---------------------------------------------------------------------	
