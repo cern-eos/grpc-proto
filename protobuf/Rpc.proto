@@ -37,11 +37,14 @@ service Eos {
   // Replies to Find requests with a stream
   rpc Find (FindRequest) returns (stream MDResponse) {}
 
+  // Replies to a NsStat operation
+  rpc NsStat (NsStatRequest) returns (NsStatResponse) {}
+
   // Replies to an insert
   rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}  
-  rpc FileInsert (FileInsertRequest) returns (InsertReply) {}  
+  rpc FileInsert (FileInsertRequest) returns (InsertReply) {}
 
-
+  // Replies to a NsRequest operation
   rpc Exec (NSRequest) returns (NSResponse) {}
 
   // ---------------------------------------------------------------------
@@ -301,9 +304,7 @@ message NSRequest {
   }
 }
 
-
-message NSResponse 
-{
+message NSResponse {
   message ErrorResponse {
     int64 code = 1;
     string msg = 2;	
@@ -336,7 +337,29 @@ message NSResponse
   AclResponse         acl = 4;
 }
 
-// ---------------------------------------------------------------------	
+message NsStatRequest {
+  string authkey = 1;
+}
+
+message NsStatResponse {
+  int64 code = 1;
+  string emsg = 2;
+  string state = 3;
+  uint64 nfiles = 4;
+  uint64 ncontainers = 5;
+  uint64 boot_time = 6;
+  uint64 current_fid = 7;
+  uint64 current_cid = 8;
+  uint64 mem_virtual = 9;
+  uint64 mem_resident = 10;
+  uint64 mem_share = 11;
+  uint64 mem_growth = 12;
+  uint64 threads = 13;
+  uint64 fds = 14;
+  uint64 uptime = 15;
+}
+
+// ---------------------------------------------------------------------
 // OPENSTACK
 // ---------------------------------------------------------------------
 
