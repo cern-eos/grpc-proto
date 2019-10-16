@@ -197,6 +197,32 @@ message FindRequest {
   MDSelection selection = 6;
 }
 
+message ShareAuth {
+ string prot = 1;
+ string name = 2;
+ string host = 3;
+}
+
+
+message ShareProto {
+  string permission = 1;
+  uint64 expires    = 2;
+  string owner      = 3;
+  string group      = 4;
+  uint64 generation = 5;
+  string path    = 6;
+  bool allowtree = 7;
+  string vtoken = 8;
+  repeated ShareAuth origins = 9;
+}
+
+message ShareToken {
+  ShareProto token = 1;
+  bytes signature = 2;
+  bytes serialized = 3;
+  int32 seed = 4;
+}
+
 message NSRequest {
   message MkdirRequest {
     MDId id = 1;
@@ -284,6 +310,10 @@ message NSRequest {
     string rule    = 5;
   }
 
+  message TokenRequest {
+    ShareToken token = 1;
+  }
+
   string authkey = 1;
   RoleId role = 2;
   // Actual request data object
@@ -301,8 +331,11 @@ message NSRequest {
     ChownRequest chown       = 31;
     ChmodRequest chmod       = 32;
     AclRequest acl           = 33;
+    TokenRequest token       = 34;
   }
 }
+
+
 
 message NSResponse {
   message ErrorResponse {
@@ -416,4 +449,5 @@ message ManilaResponse {
    string new_share_path = 6;
 
 }
+
 
