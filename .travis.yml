@@ -1,0 +1,23 @@
+language: go
+go_import_path: google.golang.org/grpc
+before_install:
+- mkdir "${HOME}/go"; export GOPATH="${HOME}/go"
+install:
+- try3() { eval "$*" || eval "$*" || eval "$*"; }
+- ./getprotoc.sh -install
+script:
+- set -e
+- pwd
+- cd protobuf
+- go get github.com/golang/protobuf/protoc-gen-go &>/dev/null
+- git checkout master
+- export PATH="$PATH:$(go env GOPATH)/bin"
+- ls -l
+- "/home/travis/bin/protoc ./Rpc.proto --go_out=plugins=grpc:."
+- echo "// `date`" >> Rpc.pb.go
+after_script:
+- ls -l
+- git status
+- git commit -a -m "Automatic update Rpc.pb.go [ci skip]"
+- git push https://${GH_TOKEN}@github.com/ffurano/grpc-proto
+
