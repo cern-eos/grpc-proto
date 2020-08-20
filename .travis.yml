@@ -2,6 +2,7 @@ language: go
 go_import_path: google.golang.org/grpc
 before_install:
 - mkdir "${HOME}/go"; export GOPATH="${HOME}/go"
+- go mod init
 install:
 - try3() { eval "$*" || eval "$*" || eval "$*"; }
 - ./getprotoc.sh -install
@@ -9,7 +10,6 @@ script:
 - set -e
 - pwd
 - cd protobuf
-- go mod init
 - go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
 - git checkout master
 - export PATH="$PATH:$(go env GOPATH)/bin"
