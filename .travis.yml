@@ -9,7 +9,7 @@ script:
 - set -e
 - pwd
 - cd protobuf
-- go get github.com/golang/protobuf/protoc-gen-go@v1.3.2 &>/dev/null
+- go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
 - git checkout master
 - export PATH="$PATH:$(go env GOPATH)/bin"
 - ls -l
