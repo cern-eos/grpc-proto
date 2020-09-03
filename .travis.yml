@@ -10,15 +10,13 @@ script:
 - set -e
 - pwd
 - cd protobuf
-- go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
+  #- go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
 - git checkout master
-- export PATH="$PATH:~/gopath/src/google.golang.org/grpc/bin:$(go env GOPATH)/bin"
-- ls -lR /home/travis/gopath/src/google.golang.org/grpc
-- pwd
-- ls -lR
+- export PATH="$PATH:$(go env GOPATH)/bin"
+- ls -lR /home/travis
 - which protoc
 - protoc --version
-- "~/gopath/src/google.golang.org/grpc/protoc ./Rpc.proto --go_out=plugins=grpc:."
+- "/home/travis/bin/protoc ./Rpc.proto --go_out=plugins=grpc:."
 - echo "// `date`" >> Rpc.pb.go
 after_script:
 - ls -l
