@@ -6,18 +6,20 @@ before_install:
 install:
 - try3() { eval "$*" || eval "$*" || eval "$*"; }
 - ./getprotoc.sh -install
-script:
 - set -e
 - pwd
 - cd protobuf
-  #- go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
+- go get github.com/golang/protobuf/protoc-gen-go
+script:
 - git checkout master
 - export PATH="$PATH:$(go env GOPATH)/bin"
 - ls -l /home/travis
+- echo "-----------------------------------"
 - which protoc
 - protoc --version
 - "/home/travis/bin/protoc ./Rpc.proto --go_out=plugins=grpc:."
 - echo "// `date`" >> Rpc.pb.go
+- echo "-----------------------------------"
 after_script:
 - ls -l
 - git status
