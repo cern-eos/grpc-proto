@@ -13,6 +13,7 @@ script:
 - go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
 - git checkout master
 - export PATH="$PATH:~/gopath/src/google.golang.org/grpc/bin:$(go env GOPATH)/bin"
+- ls -lR /home/travis/gopath/src/google.golang.org/grpc
 - pwd
 - ls -lR
 - which protoc
