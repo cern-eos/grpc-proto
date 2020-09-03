@@ -13,6 +13,7 @@ script:
 - go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
 - git checkout master
 - export PATH="$PATH:$(go env GOPATH)/bin"
+- pwd
 - ls -lR
 - "./bin/protoc ./Rpc.proto --go_out=plugins=grpc:."
 - echo "// `date`" >> Rpc.pb.go
