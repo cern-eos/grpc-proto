@@ -6,4 +6,5 @@ pushd /home/travis
 wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
 unzip -o  ${PROTOC_FILENAME}
 bin/protoc --version
+echo "The protoc to use is in `pwd`/bin"
 popd
