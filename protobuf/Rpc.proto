@@ -118,6 +118,7 @@ message FileMdProto {
   repeated uint32 unlink_locations = 14;
   map<string, bytes> xattrs = 15;
   bytes path = 16;
+  string etag = 17;
 }
 
 message ContainerMdProto {
@@ -134,6 +135,7 @@ message ContainerMdProto {
   Time stime = 11; // sync time
   map<string, bytes> xattrs = 12;
   bytes path = 13;
+  string etag = 14;
 }
 
 enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}  
