@@ -140,8 +140,12 @@ message ContainerMdProto {
 
 enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}  
 
-enum QUOTATYPE { USER = 0; GROUP = 2; PROJECT = 3; ALL = 4;}
+enum QUOTATYPE { USER = 0; GROUP = 2; PROJECT = 3;}
 
+enum QUOTAOP { GET = 0; SET = 1; RM = 2; RMNODE = 3;}
+
+enum QUOTAENTRY { NONE = 0; VOLUME = 1; INODE = 2;}
+     
 message QuotaProto { 
   bytes path = 1;                // quota node path
   string name = 2;               // associated name for the given type
@@ -365,6 +369,10 @@ message NSRequest {
   message QuotaRequest {
     bytes path = 1;
     RoleId id = 2;
+    QUOTAOP op = 3; // get or set, rm or rmnode
+    uint64 maxfiles = 4; // maximum number of bytes (volume quota) for setting
+    uint64 maxbytes = 5; // maximum number of bytes (volume quota) for setting
+    QUOTAENTRY entry = 6; // select volume or inode entry for deletion
   }
 
   string authkey = 1;
