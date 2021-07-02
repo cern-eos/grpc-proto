@@ -360,6 +360,7 @@ message NSRequest {
     bool recursive = 3;
     ACL_TYPE type = 4;
     string rule    = 5;
+    uint32 position = 6;
   }
 
   message TokenRequest {
