@@ -27,7 +27,7 @@ option java_multiple_files = true;
 option java_package = "io.grpc.eos.rpc";
 option java_outer_classname = "EosProto";
 option objc_class_prefix = "EOS";
-option go_package = ".;eos_grpc";
+option go_package = "github.com/cern-eos/grpc-proto/protobuf;eos_grpc";
 
 
 service Eos {
