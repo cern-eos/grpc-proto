@@ -295,10 +295,12 @@ message NSRequest {
      CREATE= 0;
      PURGE = 1;
      LIST = 2;
+     GRAB = 3;
    }
    MDId id = 1;
    VERSION_CMD cmd = 2;
    int32 maxversion = 3;
+   string grabversion = 4;
   }
 
   message RecycleRequest {
