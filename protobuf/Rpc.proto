@@ -333,6 +333,7 @@ message NSRequest {
     map<string, bytes> xattrs = 2;
     bool recursive = 3;
     repeated string keystodelete = 4;
+    bool create = 4;
   }
 
   message ChownRequest {
