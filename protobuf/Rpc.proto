@@ -119,6 +119,7 @@ message FileMdProto {
   map<string, bytes> xattrs = 15;
   bytes path = 16;
   string etag = 17;
+  uint64 inode = 18;
 }
 
 message ContainerMdProto {
@@ -136,6 +137,7 @@ message ContainerMdProto {
   map<string, bytes> xattrs = 12;
   bytes path = 13;
   string etag = 14;
+  uint64 inode = 15;
 }
 
 enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}  
