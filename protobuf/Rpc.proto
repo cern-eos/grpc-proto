@@ -312,6 +312,7 @@ message NSRequest {
       PURGE = 1;
       LIST = 2;
     }
+
     RECYCLE_CMD cmd = 2;
 
     message RestoreFlags {
@@ -326,8 +327,13 @@ message NSRequest {
       int32 day = 3;
     }
 
+    message ListFlags {
+      int32 maxentries = 1;	    
+    }
+
     RestoreFlags restoreflag = 3;
     PurgeDate purgedate = 4;
+    ListFlags listflag = 5;
   }
 
   message SetXAttrRequest {
