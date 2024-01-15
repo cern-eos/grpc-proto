@@ -138,6 +138,8 @@ message ContainerMdProto {
   bytes path = 13;
   string etag = 14;
   uint64 inode = 15;
+  uint64 files = 16;
+  uint64 containers = 17;
 }
 
 enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}  
