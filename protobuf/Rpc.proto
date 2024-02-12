@@ -330,7 +330,11 @@ message NSRequest {
     }
 
     message ListFlags {
-      int32 maxentries = 1;	    
+      int32 maxentries = 1;
+      int32 year = 2;
+      int32 month = 3;
+      int32 day = 4;
+      int32 index = 5;
     }
 
     RestoreFlags restoreflag = 3;
