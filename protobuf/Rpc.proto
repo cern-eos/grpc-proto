@@ -171,6 +171,7 @@ message RoleId {
   uint64 gid = 2;
   string username = 3;
   string groupname = 4;
+  string app = 5;
 }
 
 message MDId {
