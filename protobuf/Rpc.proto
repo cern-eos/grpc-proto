@@ -1,6 +1,6 @@
-// @project        The CERN Tape Archive (CTA)
-// @brief          CTA-EOS gRPC API for CASTOR-EOS migration
-// @copyright      Copyright 2019 CERN
+// @project        The EOS Open Storage
+// @brief          The EOS gRPC API, used by CTA and CERNBox
+// @copyright      Copyright 2024 CERN
 // @license        This program is free software: you can redistribute it and/or modify
 //                 it under the terms of the GNU General Public License as published by
 //                 the Free Software Foundation, either version 3 of the License, or
