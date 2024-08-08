@@ -1,0 +1,12 @@
+version: v1
+name: buf.build/cern-eos/grpc-proto
+deps:
+  - buf.build/protocolbuffers/wellknowntypes:v21.12
+lint:
+  use:
+    - DEFAULT
+  enum_zero_value_suffix: _INVALID
+  service_suffix: API
+build:
+  excludes:
+    - tools

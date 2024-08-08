@@ -1,0 +1,15 @@
+version: v1
+plugins:
+  - plugin: buf.build/protocolbuffers/go:v1.31.0
+    out: build
+    opt: paths=source_relative
+
+  - plugin: buf.build/grpc/go:v1.3.0
+    out: build
+    opt: paths=source_relative,require_unimplemented_servers=false
+
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/cern-eos/go-eosgrpc
+
