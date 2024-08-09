@@ -8,13 +8,15 @@ jobs:
   build-and-publish:
     name: Build and publish
     runs-on: ubuntu-latest
+    # here we reuse an image that is maintained for the CS3APIs bindings, which contains the necessary tools (buf)
+    # see https://github.com/cs3org/cs3apis-build/blob/master/Dockerfile
     container: cs3org/cs3apis-build:master
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: setup-ssh
         env:
-          SSH_KEY: ${{ secrets.ssh_key}}
+          SSH_KEY: ${{ secrets.ssh_key }}
         run: |
           mkdir /root/.ssh
           python3 -c "import os; file = open('/root/.ssh/id_rsa', 'w'); file.write(os.environ['SSH_KEY']); file.close()"
@@ -24,12 +26,29 @@ jobs:
           touch /root/.ssh/known_hosts
           chmod 400 /root/.ssh/known_hosts
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
-      - name: build-and-publish
-        run: cs3apis-build -git-ssh -push-go -push-js -push-node -push-python
+      - name: build
+        run: |
+          cd grpc-proto
+          buf generate
+          sed -i 's/go_eosgrpc/go-eosgrpc' build/*.go
+          mv build ..
+      - name: push-git
+        run: |
+          git config user.email "cs3org-bot@hugo.labkode.com"
+          git config user.name "cs3org-bot"
+          cd grpc-proto
+          commitid=$(git rev-parse HEAD)
+          cd ..
+          git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
+          cp build/*.go go-eosgrpc/
+          cd go-eosgrpc
+          git add .
+          git commit -m 'Synced to https://github.com/cern-eos/grpc-proto/tree/${commitid}'
+          git push origin main
       - name: setup-buf
         uses: bufbuild/buf-setup-action@v1
       - name: push-buf
         uses: bufbuild/buf-push-action@v1
         with:
           buf_token: ${{ secrets.BUF_TOKEN }}
-          draft: ${{ github.ref_name != 'main'}}
+          draft: ${{ github.ref_name != 'master'}}
