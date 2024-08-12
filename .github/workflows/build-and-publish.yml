@@ -30,7 +30,6 @@ jobs:
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
       - name: build
         run: |
-          cd grpc-proto
           buf generate
           sed -i 's/go_eosgrpc/go-eosgrpc' build/*.go
           mv build ..
