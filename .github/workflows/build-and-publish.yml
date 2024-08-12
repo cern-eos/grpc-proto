@@ -3,7 +3,9 @@ name: Build and Publish
 on:
   push:
     branches:
-      - main
+      - master
+  workflow_dispatch:
+
 jobs:
   build-and-publish:
     name: Build and publish
