@@ -30,22 +30,17 @@ jobs:
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
       - name: build
         run: |
-          cd grpc-proto
           buf generate
-          sed -i 's/go_eosgrpc/go-eosgrpc' build/*.go
-          mv build ..
+          sed -i 's/go_eosgrpc/go-eosgrpc/' build/*.go
       - name: push-git
         run: |
+          git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
+          cd go-eosgrpc
           git config user.email "cbox@cern.ch"
           git config user.name "cernbox-bot"
-          cd grpc-proto
-          commitid=$(git rev-parse HEAD)
-          cd ..
-          git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
-          cp build/*.go go-eosgrpc/
-          cd go-eosgrpc
+          cp ../grpc-proto/build/*.go .
           git add .
-          git commit -m 'Synced to https://github.com/cern-eos/grpc-proto/tree/${commitid}'
+          git commit -m 'Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}'
           git push origin main
       - name: setup-buf
         uses: bufbuild/buf-setup-action@v1
