@@ -29,7 +29,6 @@ jobs:
       - name: build-and-push
         run: |
           buf generate
-          sed -i 's/go_eosgrpc/go-eosgrpc/' build/*.go
           cd ..
           git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
           cd go-eosgrpc
