@@ -22,18 +22,15 @@ jobs:
         run: |
           mkdir /root/.ssh
           python3 -c "import os; file = open('/root/.ssh/id_rsa', 'w'); file.write(os.environ['SSH_KEY']); file.close()"
-          shasum /root/.ssh/id_rsa
           chmod 400 /root/.ssh/id_rsa
-          stat /root/.ssh/id_rsa
           touch /root/.ssh/known_hosts
           chmod 400 /root/.ssh/known_hosts
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
-      - name: build
+      - name: build-and-push
         run: |
           buf generate
           sed -i 's/go_eosgrpc/go-eosgrpc/' build/*.go
-      - name: push-git
-        run: |
+          cd ..
           git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
           cd go-eosgrpc
           git config user.email "cbox@cern.ch"
