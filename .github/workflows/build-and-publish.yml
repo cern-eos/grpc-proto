@@ -34,8 +34,8 @@ jobs:
           mv build ..
       - name: push-git
         run: |
-          git config user.email "cs3org-bot@hugo.labkode.com"
-          git config user.name "cs3org-bot"
+          git config user.email "cbox@cern.ch"
+          git config user.name "cernbox-bot"
           cd grpc-proto
           commitid=$(git rev-parse HEAD)
           cd ..
