@@ -37,12 +37,12 @@ jobs:
           cp ../grpc-proto/build/*.go .
           git add .
           git commit -m 'Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}'
-          git push origin main
           if [[ $? -ne 0 ]]; then
             echo "The committed changes (if any) did not update the protobufs, nothing more to do"
             gh run cancel ${{ github.run_id }}
             gh run watch ${{ github.run_id }}
           fi
+          git push origin main
       - name: setup-buf
         uses: bufbuild/buf-setup-action@v1
       - name: push-buf
