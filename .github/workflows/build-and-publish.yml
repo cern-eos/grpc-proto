@@ -28,6 +28,7 @@ jobs:
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
       - name: build-and-push
         run: |
+          set -x
           buf generate
           cd ..
           git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
@@ -36,7 +37,7 @@ jobs:
           git config user.name "cernbox-bot"
           cp ../grpc-proto/build/*.go .
           git add .
-          done=$(git commit -m 'Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}')
+          done=(git commit -m "Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}")
           if [[ $done -eq 0 ]]; then
             git push origin main
           else
