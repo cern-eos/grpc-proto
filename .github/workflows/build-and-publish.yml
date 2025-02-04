@@ -37,8 +37,9 @@ jobs:
           git config user.name "cernbox-bot"
           cp ../grpc-proto/build/*.go .
           git add .
-          git commit -m "Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}"
-          if [ $? -eq 0 ]; then
+          todo=1
+          git commit -m "Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}" || todo=0
+          if [ $todo -eq 1 ]; then
             git push origin main
           else
             echo "The committed changes (if any) did not update the protobufs, nothing more to do"
