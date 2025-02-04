@@ -19,6 +19,7 @@ jobs:
       - name: setup-ssh
         env:
           SSH_KEY: ${{ secrets.ssh_key }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir /root/.ssh
           python3 -c "import os; file = open('/root/.ssh/id_rsa', 'w'); file.write(os.environ['SSH_KEY']); file.close()"
