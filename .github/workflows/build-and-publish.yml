@@ -27,8 +27,6 @@ jobs:
           chmod 400 /root/.ssh/known_hosts
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
       - name: build-and-push
-        permissions:
-          actions: 'write'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
