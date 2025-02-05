@@ -166,6 +166,7 @@ message RoleId {
   string groupname = 4;
   string app = 5;
   string trace = 6;
+  string onbehalf = 7;
 }
 
 message MDId {
