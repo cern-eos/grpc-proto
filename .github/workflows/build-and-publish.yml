@@ -29,7 +29,6 @@ jobs:
       - name: build-and-push
         id: build
         run: |
-          set -x
           buf generate
           cd ..
           git clone git+ssh://git@github.com/cern-eos/go-eosgrpc
@@ -45,9 +44,7 @@ jobs:
           else
             echo "The committed changes (if any) did not update the protobufs, nothing more to do"
           fi
-          echo "pushbuf=$push" >> $GITHUB_ENV
-      - name: Set pushbuf output
-        run: echo "::set-output name=pushbuf::$push"
+          echo "pushbuf=$push" >> $GITHUB_OUTPUT
   publish:
     name: Setup buf to push artifacts
     runs-on: ubuntu-latest
