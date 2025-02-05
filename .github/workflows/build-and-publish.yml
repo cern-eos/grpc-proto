@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-publish:
-    name: Build and publish
+  build:
+    name: Build and push the generated code
     runs-on: ubuntu-latest
     # here we reuse an image that is maintained for the CS3APIs bindings, which contains the necessary tools (buf)
     # see https://github.com/cs3org/cs3apis-build/blob/master/Dockerfile
@@ -27,8 +27,9 @@ jobs:
           chmod 400 /root/.ssh/known_hosts
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
       - name: build-and-push
-        env:
-          GH_TOKEN: ${{ github.token }}
+        id: build
+        outputs:
+          pushbuf: ${{ steps.build.outputs.pushbuf }}
         run: |
           set -x
           buf generate
@@ -39,15 +40,23 @@ jobs:
           git config user.name "cernbox-bot"
           cp ../grpc-proto/build/*.go .
           git add .
-          todo=1
-          git commit -m "Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}" || todo=0
-          if [ $todo -eq 1 ]; then
+          push=1
+          git commit -m "Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}" || push=0
+          if [ $push -eq 1 ]; then
             git push origin main
           else
             echo "The committed changes (if any) did not update the protobufs, nothing more to do"
-            gh run cancel ${{ github.run_id }}
-            gh run watch ${{ github.run_id }}
           fi
+          echo "pushbuf=$push" >> $GITHUB_ENV
+      - name: Set pushbuf output
+        run: echo "::set-output name=pushbuf::$push"
+  publish:
+    name: Setup buf to push artifacts
+    runs-on: ubuntu-latest
+    container: cs3org/cs3apis-build:master
+    needs: build
+    if: needs.build.outputs.pushbuf == '1'  # skip all this when nothing to do
+    steps:
       - name: setup-buf
         uses: bufbuild/buf-setup-action@v1
       - name: push-buf
@@ -55,3 +64,4 @@ jobs:
         with:
           buf_token: ${{ secrets.BUF_TOKEN }}
           draft: ${{ github.ref_name != 'master'}}
+
