@@ -28,8 +28,6 @@ jobs:
           ssh-keyscan -H github.com > /etc/ssh/ssh_known_hosts 2> /dev/null
       - name: build-and-push
         id: build
-        outputs:
-          pushbuf: ${{ steps.build.outputs.pushbuf }}
         run: |
           set -x
           buf generate
