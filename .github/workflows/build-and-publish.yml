@@ -44,13 +44,11 @@ jobs:
           else
             echo "The committed changes (if any) did not update the protobufs, nothing more to do"
           fi
-          echo "pushbuf=$push" >> $GITHUB_OUTPUT
   publish:
     name: Setup buf to push artifacts
     runs-on: ubuntu-latest
     container: cs3org/cs3apis-build:master
     needs: build
-    if: needs.build.outputs.pushbuf == '1'  # skip all this when nothing to do
     steps:
       - name: setup-buf
         uses: bufbuild/buf-setup-action@v1
