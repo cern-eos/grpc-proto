@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build and push the generated code
+  build-and-publish:
+    name: Build, push and publish the generated code
     runs-on: ubuntu-latest
     # here we reuse an image that is maintained for the CS3APIs bindings, which contains the necessary tools (buf)
     # see https://github.com/cs3org/cs3apis-build/blob/master/Dockerfile
@@ -44,12 +44,6 @@ jobs:
           else
             echo "The committed changes (if any) did not update the protobufs, nothing more to do"
           fi
-  publish:
-    name: Setup buf to push artifacts
-    runs-on: ubuntu-latest
-    container: cs3org/cs3apis-build:master
-    needs: build
-    steps:
       - name: setup-buf
         uses: bufbuild/buf-setup-action@v1
       - name: push-buf
