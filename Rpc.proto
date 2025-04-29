@@ -32,7 +32,10 @@ option go_package = "go-eosgrpc";
 
 service Eos {
   // Replies to a ping
-  rpc Ping (PingRequest) returns (PingReply) {}  
+  rpc Ping (PingRequest) returns (PingReply) {}
+
+  // Replise to a notification
+  rpc Notify (NotificationRequest) returns (NotificationResponse) {}
 
   // ---------------------------------------------------------------------
   // NAMESPACE
@@ -40,6 +43,8 @@ service Eos {
 
   // Replies to MD requests with a stream 
   rpc MD (MDRequest) returns (stream MDResponse) {}
+
+  rpc Notification (NotificationRequest) returns (stream NotificationResponse) {}
 
   // Replies to Find requests with a stream
   rpc Find (FindRequest) returns (stream MDResponse) {}
@@ -62,6 +67,14 @@ message PingRequest {
 
 message PingReply {
   bytes message = 1;
+}
+
+message NotificationRequest {
+  bytes message = 1;
+}
+
+message NotificationResponse {
+  bool success = 1;
 }
 
 // ---------------------------------------------------------------------
@@ -217,6 +230,13 @@ message MDResponse {
   TYPE type = 1;
   FileMdProto fmd = 2;
   ContainerMdProto cmd = 3;
+}
+
+message MDNotification {
+  TYPE type = 1;
+  FileMdProto fmd = 2;
+  ContainerMdProto cmd = 3;
+  RoleId role = 4;
 }
 
 message FindRequest {
