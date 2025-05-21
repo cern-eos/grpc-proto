@@ -119,13 +119,14 @@ message FileMdProto {
   bytes link_name = 9;
   Time ctime = 10; // change time
   Time mtime = 11; // modification time
-  Checksum checksum =12;
+  Checksum checksum = 12 [deprecated = true];
   repeated uint32 locations = 13;
   repeated uint32 unlink_locations = 14;
   map<string, bytes> xattrs = 15;
   bytes path = 16;
   string etag = 17;
   uint64 inode = 18;
+  repeated Checksum checksums = 19;
 }
 
 message ContainerMdProto {
