@@ -394,6 +394,7 @@ message NSRequest {
     ACL_TYPE type = 4;
     string rule    = 5;
     uint32 position = 6;
+    bool sync_write = 7;
   }
 
   message TokenRequest {
