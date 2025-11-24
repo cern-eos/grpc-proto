@@ -1,0 +1,72 @@
+syntax="proto3";
+package eos.console;
+
+option go_package = "eos.rest.gateway.service";
+
+message RecycleProto {
+  enum RecycleType {
+    UID = 0;
+    RID = 1;
+    ALL = 2;
+  }
+
+  message LsProto {
+    bool FullDetails    = 1;
+    bool NumericIds     = 2;
+    bool MonitorFmt     = 3;
+    string Date         = 4;
+    int32 Maxentries    = 5;
+    RecycleType Type    = 6;
+    string RecycleId    = 7;
+  }
+
+  message PurgeProto {
+    string Date      = 1;
+    string Key       = 2;
+    RecycleType Type = 3;
+    string RecycleId = 4;
+  }
+
+  message RestoreProto {
+    bool ForceOrigName   = 1;
+    bool RestoreVersions = 2;
+    bool MakePath        = 3;
+    string Key           = 4;
+  }
+
+  message ConfigProto {
+    enum OpType {
+     ADD_BIN  = 0;
+     RM_BIN   = 1;
+     LIFETIME = 2;
+     RATIO    = 3;
+     SIZE     = 4;
+     INODES   = 5;
+     POLL_INTERVAL    = 6;
+     COLLECT_INTERVAL = 7;
+     REMOVE_INTERVAL  = 8;
+     DRY_RUN          = 9;
+     DUMP             = 10;
+   }
+
+    OpType op         = 1;
+    string Subtree    = 2;
+    int32 LifetimeSec = 3;
+    float Ratio       = 4;
+    uint64 Size       = 5; // Use by either SIZE or INODES
+    string value      = 6;
+  }
+
+  message ProjectProto {
+    string path = 1;
+    string acl  = 2;
+  }
+
+  oneof subcmd {
+    LsProto ls           = 1;
+    PurgeProto purge     = 2;
+    RestoreProto restore = 3;
+    ConfigProto config   = 4;
+    ProjectProto project = 5;
+  }
+}

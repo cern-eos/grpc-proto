@@ -29,6 +29,7 @@ option java_outer_classname = "EosProto";
 option objc_class_prefix = "EOS";
 option go_package = "go-eosgrpc";
 
+import "Recycle.proto";
 
 service Eos {
   // Replies to a ping
@@ -41,7 +42,7 @@ service Eos {
   // NAMESPACE
   // ---------------------------------------------------------------------
 
-  // Replies to MD requests with a stream 
+  // Replies to MD requests with a stream
   rpc MD (MDRequest) returns (stream MDResponse) {}
 
   rpc Notification (NotificationRequest) returns (stream NotificationResponse) {}
@@ -53,7 +54,7 @@ service Eos {
   rpc NsStat (NsStatRequest) returns (NsStatResponse) {}
 
   // Replies to an insert
-  rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}  
+  rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}
   rpc FileInsert (FileInsertRequest) returns (InsertReply) {}
 
   // Replies to a NsRequest operation
@@ -149,20 +150,20 @@ message ContainerMdProto {
   uint64 containers = 17;
 }
 
-enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}  
+enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}
 
 enum QUOTATYPE { USER = 0; GROUP = 2; PROJECT = 3;}
 
 enum QUOTAOP { GET = 0; SET = 1; RM = 2; RMNODE = 3;}
 
 enum QUOTAENTRY { NONE = 0; VOLUME = 1; INODE = 2;}
-     
-message QuotaProto { 
+
+message QuotaProto {
   bytes path = 1;                // quota node path
   string name = 2;               // associated name for the given type
   QUOTATYPE type = 3;            // user,group,project or all quota
   uint64 usedbytes = 4;          // bytes used physical
-  uint64 usedlogicalbytes = 5;   // bytes used logical 
+  uint64 usedlogicalbytes = 5;   // bytes used logical
   uint64 usedfiles = 6;          // number of files used
   uint64 maxbytes = 7;           // maximum number of bytes (volume quota)
   uint64 maxlogicalbytes = 8;    // maximum number of logical bytes (logical volume quota)
@@ -172,7 +173,7 @@ message QuotaProto {
   string statusbytes = 12;       // status string for volume quota ok,warning,exceeded
   string statusfiles = 13;       // status string for inode quota ok,warning,exceeded
 }
-  
+
 message RoleId {
   uint64 uid = 1;
   uint64 gid = 2;
@@ -243,7 +244,7 @@ message MDNotification {
 message FindRequest {
   TYPE type = 1;
   MDId id = 2;
-  RoleId role = 3;	
+  RoleId role = 3;
   string authkey = 4;
   uint64 maxdepth = 5;
   MDSelection selection = 6;
@@ -281,11 +282,11 @@ message NSRequest {
     bool recursive = 2;
     int64 mode = 3;
   }
-  
+
   message RmdirRequest {
     MDId id = 1;
   }
- 
+
   message TouchRequest {
     MDId id = 1;
   }
@@ -325,14 +326,17 @@ message NSRequest {
   }
 
   message RecycleRequest {
-    string key = 1; 
-    enum RECYCLE_CMD {
-      RESTORE = 0;
-      PURGE = 1;
-      LIST = 2;
+    enum DisplayType {
+      UID = 0;
+      RID = 1;
+      ALL = 2;
     }
 
-    RECYCLE_CMD cmd = 2;
+    enum RECYCLE_CMD {
+      RESTORE = 0;
+      PURGE   = 1;
+      LIST    = 2;
+    }
 
     message RestoreFlags {
       bool force = 1;
@@ -347,16 +351,21 @@ message NSRequest {
     }
 
     message ListFlags {
-      int32 maxentries = 1;
-      int32 year = 2;
-      int32 month = 3;
-      int32 day = 4;
-      int32 index = 5;
+      int32 maxentries    = 1;
+      int32 year          = 2;
+      int32 month         = 3;
+      int32 day           = 4;
+      int32 index         = 5;
+      DisplayType display = 6;
+      string display_val  = 7;
     }
 
-    RestoreFlags restoreflag = 3;
-    PurgeDate purgedate = 4;
-    ListFlags listflag = 5;
+    string key = 1;
+    string recycleId = 2;
+    RECYCLE_CMD cmd = 3;
+    RestoreFlags restoreflag = 4;
+    PurgeDate purgedate = 5;
+    ListFlags listflag = 6;
   }
 
   message SetXAttrRequest {
@@ -369,7 +378,7 @@ message NSRequest {
 
   message ChownRequest {
     MDId id = 1;
-    RoleId owner = 2;  
+    RoleId owner = 2;
   }
 
   message ChmodRequest {
@@ -417,7 +426,7 @@ message NSRequest {
         NONE                  = 0; //
         MONITORING            = 1; // [-m]
         LISTING               = 2; // [-l]
-	JSON                  = 3; // [grpc]
+        JSON                  = 3; // [grpc]
       }
     OutFormat outformat   = 1; //
     string selection      = 2; //
@@ -459,7 +468,7 @@ message NSRequest {
     RenameRequest rename     = 26;
     SymlinkRequest symlink   = 27;
     VersionRequest version   = 28;
-    RecycleRequest recycle   = 29;
+    RecycleRequest old_recycle   = 29;
     SetXAttrRequest xattr    = 30;
     ChownRequest chown       = 31;
     ChmodRequest chmod       = 32;
@@ -467,6 +476,7 @@ message NSRequest {
     TokenRequest token       = 34;
     QuotaRequest quota       = 35;
     ShareRequest share       = 36;
+    eos.console.RecycleProto recycle = 37;
   }
 }
 
@@ -475,7 +485,7 @@ message NSRequest {
 message NSResponse {
   message ErrorResponse {
     int64 code = 1;
-    string msg = 2;	
+    string msg = 2;
   }
 
   message VersionResponse {
@@ -484,14 +494,14 @@ message NSResponse {
       Time   mtime = 2;
     }
     int64 code = 1;
-    string msg = 2;	
+    string msg = 2;
     repeated VersionInfo versions = 3;
   }
 
   message RecycleResponse {
     int64 code = 1;
-    string msg = 2;	
-    
+    string msg = 2;
+
     message RecycleInfo {
       enum DELETIONTYPE { FILE = 0;  TREE = 1; }
       MDId   id = 1;
@@ -500,20 +510,20 @@ message NSResponse {
       uint64 size = 4;
       DELETIONTYPE type = 5;
       string key = 6;
-    }   
-    
+    }
+
     repeated RecycleInfo recycles = 3;
   }
 
   message AclResponse {
     int64 code = 1;
-    string msg = 2;	
+    string msg = 2;
     string rule = 3;
   }
 
   message QuotaResponse {
-    int64 code = 1;   
-    string msg = 2;   	
+    int64 code = 1;
+    string msg = 2;
     repeated QuotaProto quotanode = 3;
   }
 
@@ -532,7 +542,7 @@ message NSResponse {
 
   message ShareResponse {
     int64 code = 1;
-    string msg = 2;    
+    string msg = 2;
     repeated ShareInfo shares = 3;
     repeated ShareAccess access = 4;
   }
