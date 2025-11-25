@@ -325,8 +325,6 @@ message NSRequest {
   }
 
   message RecycleRequest {
-    string key = 1;
-
     enum DisplayType {
       UID = 0;
       RID = 1;
@@ -335,11 +333,9 @@ message NSRequest {
 
     enum RECYCLE_CMD {
       RESTORE = 0;
-      PURGE = 1;
-      LIST = 2;
+      PURGE   = 1;
+      LIST    = 2;
     }
-
-    RECYCLE_CMD cmd = 2;
 
     message RestoreFlags {
       bool force = 1;
@@ -361,12 +357,14 @@ message NSRequest {
       int32 index         = 5;
       DisplayType display = 6;
       string display_val  = 7;
-
     }
 
-    RestoreFlags restoreflag = 3;
-    PurgeDate purgedate = 4;
-    ListFlags listflag = 5;
+    string key = 1;
+    string recycleId = 2;
+    RECYCLE_CMD cmd = 3;
+    RestoreFlags restoreflag = 4;
+    PurgeDate purgedate = 5;
+    ListFlags listflag = 6;
   }
 
   message SetXAttrRequest {
