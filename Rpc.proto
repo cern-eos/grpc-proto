@@ -29,6 +29,7 @@ option java_outer_classname = "EosProto";
 option objc_class_prefix = "EOS";
 option go_package = "go-eosgrpc";
 
+import "Recycle.proto";
 
 service Eos {
   // Replies to a ping
@@ -467,7 +468,7 @@ message NSRequest {
     RenameRequest rename     = 26;
     SymlinkRequest symlink   = 27;
     VersionRequest version   = 28;
-    RecycleRequest recycle   = 29;
+    RecycleRequest old_recycle   = 29;
     SetXAttrRequest xattr    = 30;
     ChownRequest chown       = 31;
     ChmodRequest chmod       = 32;
@@ -475,6 +476,7 @@ message NSRequest {
     TokenRequest token       = 34;
     QuotaRequest quota       = 35;
     ShareRequest share       = 36;
+    eos.console.RecycleProto recycle = 37;
   }
 }
 
