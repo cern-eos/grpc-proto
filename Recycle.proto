@@ -47,6 +47,7 @@ message RecycleProto {
      REMOVE_INTERVAL  = 8;
      DRY_RUN          = 9;
      DUMP             = 10;
+     ENABLE           = 11;
    }
 
     OpType op         = 1;
