@@ -48,7 +48,8 @@ message RecycleProto {
      DRY_RUN          = 9;
      DUMP             = 10;
      ENABLE           = 11;
-   }
+     ENFORCE          = 12;
+    }
 
     OpType op         = 1;
     string Subtree    = 2;
