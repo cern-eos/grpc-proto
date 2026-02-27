@@ -1,0 +1,201 @@
+// ----------------------------------------------------------------------------
+// File: TrafficShaping.proto
+// Author: Luis Antonio Obis Aparicio <luis.obis@cern.ch>
+// ----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+package eos.traffic_shaping;
+
+option go_package = "eos_traffic_shaping_monitor/proto";
+
+// Represents the I/O stats for a single "Stream" (Unique App/UID/GID combo).
+// This is only sent if the counters have changed since the last report.
+message IoStatEntry {
+  // --- Identity ---
+  // The application name (e.g., "backup_daemon", "chrome").
+  // TODO: Consider mapping this to an int32 ID in a separate dictionary if string overhead is too high.
+  string app_name = 1;
+  uint32 uid = 2; // The user ID
+  uint32 gid = 3; // The group ID
+
+  // --- Lifecycle Safety ---
+  // A unique random ID generated when this counter was created in the Node's memory.
+  // CRITICAL: If the Node garbage collects this entry and recreates it later (starting from 0),
+  // this ID MUST change. This tells the Brain "This is a new session, do not diff against old value."
+  uint64 generation_id = 4;
+
+  // --- Metrics (Cumulative) ---
+  // We use cumulative counters to be robust against packet loss.
+  // The Brain calculates: Delta = Current - Previous.
+  uint64 total_bytes_read = 5;
+  uint64 total_bytes_written = 6;
+  // IOPS
+  uint64 total_read_ops = 7;
+  uint64 total_write_ops = 8;
+}
+
+// The heartbeat message sent every 1 second by every Storage Node.
+message FstIoReport {
+  // --- Metadata ---
+  string node_id = 1; // Unique Hostname or UUID of the FST
+  int64 timestamp_ms = 2; // When this snapshot was taken (Unix Epoch)
+
+  // To detect Node Restarts. If this changes, MGM discards all previous state for this Node.
+  int64 node_start_time_ms = 3;
+
+  // --- Payload ---
+  // List of streams that have activity. Idle streams are omitted to save bandwidth.
+  repeated IoStatEntry entries = 4;
+}
+
+message MgmIoResponse {
+  // We will fill this with rate-limit instructions later.
+  // For now, it can just acknowledge receipt.
+  bool ack = 1;
+}
+
+service TrafficShapingService {
+  // Bidirectional streaming: The FST opens a stream and pushes FstIoReport repeatedly.
+  // The MGM can push back MgmIoResponse (limits/acks) asynchronously.
+  rpc StreamIoStats(stream FstIoReport) returns (stream MgmIoResponse);
+}
+
+// service in the mgm which will report rates / iops for a given app, uid or gid
+
+// --- Core Data Structures ---
+
+message RateStats {
+  TrafficShapingRateRequest.Estimators window = 1;
+
+  double bytes_read_per_sec = 2;
+  double bytes_written_per_sec = 3;
+  double iops_read = 4;
+  double iops_write = 5;
+}
+
+message AppRateEntry {
+  string app_name = 1;
+  repeated RateStats stats = 2;
+}
+
+message UserRateEntry {
+  uint32 uid = 1;
+  repeated RateStats stats = 2;
+}
+
+message GroupRateEntry {
+  uint32 gid = 1;
+  repeated RateStats stats = 2;
+}
+
+// --- Response Definition ---
+
+message TrafficShapingRateReport {
+  int64 timestamp_ms = 1;
+
+  // These are only filled if requested in RateRequest
+  repeated AppRateEntry app_stats = 2;
+  repeated UserRateEntry user_stats = 3;
+  repeated GroupRateEntry group_stats = 4;
+}
+
+/*
+   service RateReportingService {
+     // Unary: Get a single snapshot (e.g., for a CLI tool like 'eos io stat')
+     rpc GetRates(RateRequest) returns (RateReport);
+
+     // Streaming: Get live updates (e.g., for a Web Dashboard / Grafana)
+     rpc StreamRates(RateRequest) returns (stream RateReport);
+   }
+*/
+
+message TrafficShapingPolicy {
+  uint64 limit_write_bytes_per_sec = 1;
+  uint64 limit_read_bytes_per_sec = 2;
+  uint64 reservation_write_bytes_per_sec = 3;
+  uint64 reservation_read_bytes_per_sec = 4;
+
+  // Marked as optional so we can detect if it's missing and apply the 'true' default in C++
+  optional bool is_enabled = 5;
+}
+
+message TrafficShapingPolicyConfig {
+  // Assuming uid and gid are 32-bit unsigned integers.
+  // Change to uint64 if your system uses 64-bit IDs.
+  map<uint32, TrafficShapingPolicy> uid_policies = 1;
+  map<uint32, TrafficShapingPolicy> gid_policies = 2;
+  map<string, TrafficShapingPolicy> app_policies = 3;
+}
+
+message TrafficShapingFstIoDelayConfig {
+  // mapp uid / gid / app to delay in microseconds
+  map<uint32, uint64> uid_read_delay = 1;
+  map<uint32, uint64> uid_write_delay = 2;
+
+  map<uint32, uint64> gid_read_delay = 3;
+  map<uint32, uint64> gid_write_delay = 4;
+
+  map<string, uint64> app_read_delay = 5;
+  map<string, uint64> app_write_delay = 6;
+}
+
+// GRPC methods
+
+message TrafficShapingRateRequest {
+  enum Estimators {
+    UNSPECIFIED = 0;
+    // SMA
+    SMA_1_SECONDS = 1;
+    SMA_5_SECONDS = 2;
+    SMA_15_SECONDS = 3;
+    SMA_1_MINUTES = 4;
+    SMA_5_MINUTES = 5;
+    // EMA
+    EMA_1_SECONDS = 6;
+    EMA_5_SECONDS = 7;
+  }
+  repeated Estimators estimators = 1;
+
+  enum EntityType {
+    ENTITY_UNSPECIFIED = 0;
+    ENTITY_APP = 1;
+    ENTITY_UID = 2;
+    ENTITY_GID = 3;
+  }
+  repeated EntityType include_types = 2;
+
+  // How many top entries to return for each type? (e.g., Top 10 apps)
+  optional uint32 top_n = 3;
+
+  // --- 4. Sorting Ambiguity Resolver ---
+  // If I ask for 5s and 5m windows, which one determines who is in the "Top 10"?
+  // (e.g., Sort by 5m trend, but show me the 1s spikes too)
+  optional Estimators sort_by_estimator = 4;
+}
+
+message ThreadLoopStats {
+  uint64 mean_elapsed_time_micro_sec = 4;
+  uint64 min_elapsed_time_micro_sec = 5;
+  uint64 max_elapsed_time_micro_sec = 6;
+}
+
+message TrafficShapingRateResponse {
+  int64 timestamp_ms = 1;
+
+  // These are only filled if requested in RateRequest
+  repeated AppRateEntry app_stats = 2;
+  repeated UserRateEntry user_stats = 3;
+  repeated GroupRateEntry group_stats = 4;
+
+  // These are min/max/mean calculated over a window set by system_stats_time_window_seconds
+  ThreadLoopStats fst_limits_update_thread_loop_stats = 9;
+  ThreadLoopStats estimators_update_thread_loop_stats = 10;
+}
+
+message ThreadConfig {
+  uint32 update_estimators_period_millis = 1;
+  uint32 fst_policy_update_period_millis = 2;
+  uint32 fst_io_stats_report_period_millis = 3;
+  uint32 system_stats_time_window_seconds = 4;
+}

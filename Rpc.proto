@@ -14,51 +14,52 @@
 //                 You should have received a copy of the GNU General Public License
 //                 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // NOTE: Compile for Go with:
 // protoc ./eos_grpc.proto --go_out=plugins=grpc:.
-
 
 syntax = "proto3";
 
 package eos.rpc;
 
-option java_multiple_files = true;
-option java_package = "io.grpc.eos.rpc";
-option java_outer_classname = "EosProto";
-option objc_class_prefix = "EOS";
-option go_package = "go-eosgrpc";
-
 import "Recycle.proto";
+import "TrafficShaping.proto";
+
+option go_package = "go-eosgrpc";
+option java_multiple_files = true;
+option java_outer_classname = "EosProto";
+option java_package = "io.grpc.eos.rpc";
+option objc_class_prefix = "EOS";
 
 service Eos {
   // Replies to a ping
-  rpc Ping (PingRequest) returns (PingReply) {}
+  rpc Ping(PingRequest) returns (PingReply) {}
 
-  // Replise to a notification
-  rpc Notify (NotificationRequest) returns (NotificationResponse) {}
+  // Replies to a notification
+  rpc Notify(NotificationRequest) returns (NotificationResponse) {}
 
   // ---------------------------------------------------------------------
   // NAMESPACE
   // ---------------------------------------------------------------------
 
   // Replies to MD requests with a stream
-  rpc MD (MDRequest) returns (stream MDResponse) {}
+  rpc MD(MDRequest) returns (stream MDResponse) {}
 
-  rpc Notification (NotificationRequest) returns (stream NotificationResponse) {}
+  rpc Notification(NotificationRequest) returns (stream NotificationResponse) {}
 
   // Replies to Find requests with a stream
-  rpc Find (FindRequest) returns (stream MDResponse) {}
+  rpc Find(FindRequest) returns (stream MDResponse) {}
 
   // Replies to a NsStat operation
-  rpc NsStat (NsStatRequest) returns (NsStatResponse) {}
+  rpc NsStat(NsStatRequest) returns (NsStatResponse) {}
 
   // Replies to an insert
-  rpc ContainerInsert (ContainerInsertRequest) returns (InsertReply) {}
-  rpc FileInsert (FileInsertRequest) returns (InsertReply) {}
+  rpc ContainerInsert(ContainerInsertRequest) returns (InsertReply) {}
+  rpc FileInsert(FileInsertRequest) returns (InsertReply) {}
 
   // Replies to a NsRequest operation
-  rpc Exec (NSRequest) returns (NSResponse) {}
+  rpc Exec(NSRequest) returns (NSResponse) {}
+
+  rpc TrafficShapingRate(eos.traffic_shaping.TrafficShapingRateRequest) returns (stream eos.traffic_shaping.TrafficShapingRateResponse) {}
 }
 
 message PingRequest {
@@ -139,7 +140,7 @@ message ContainerMdProto {
   uint32 mode = 5;
   uint32 flags = 7;
   bytes name = 8;
-  Time ctime = 9;  // change time
+  Time ctime = 9; // change time
   Time mtime = 10; // modification time
   Time stime = 11; // sync time
   map<string, bytes> xattrs = 12;
@@ -150,28 +151,46 @@ message ContainerMdProto {
   uint64 containers = 17;
 }
 
-enum TYPE { FILE = 0; CONTAINER = 1; LISTING = 2; STAT = 3;}
+enum TYPE {
+  FILE = 0;
+  CONTAINER = 1;
+  LISTING = 2;
+  STAT = 3;
+}
 
-enum QUOTATYPE { USER = 0; GROUP = 2; PROJECT = 3;}
+enum QUOTATYPE {
+  USER = 0;
+  GROUP = 2;
+  PROJECT = 3;
+}
 
-enum QUOTAOP { GET = 0; SET = 1; RM = 2; RMNODE = 3;}
+enum QUOTAOP {
+  GET = 0;
+  SET = 1;
+  RM = 2;
+  RMNODE = 3;
+}
 
-enum QUOTAENTRY { NONE = 0; VOLUME = 1; INODE = 2;}
+enum QUOTAENTRY {
+  NONE = 0;
+  VOLUME = 1;
+  INODE = 2;
+}
 
 message QuotaProto {
-  bytes path = 1;                // quota node path
-  string name = 2;               // associated name for the given type
-  QUOTATYPE type = 3;            // user,group,project or all quota
-  uint64 usedbytes = 4;          // bytes used physical
-  uint64 usedlogicalbytes = 5;   // bytes used logical
-  uint64 usedfiles = 6;          // number of files used
-  uint64 maxbytes = 7;           // maximum number of bytes (volume quota)
-  uint64 maxlogicalbytes = 8;    // maximum number of logical bytes (logical volume quota)
-  uint64 maxfiles = 9;           // maximum number of files (inode quota)
+  bytes path = 1; // quota node path
+  string name = 2; // associated name for the given type
+  QUOTATYPE type = 3; // user,group,project or all quota
+  uint64 usedbytes = 4; // bytes used physical
+  uint64 usedlogicalbytes = 5; // bytes used logical
+  uint64 usedfiles = 6; // number of files used
+  uint64 maxbytes = 7; // maximum number of bytes (volume quota)
+  uint64 maxlogicalbytes = 8; // maximum number of logical bytes (logical volume quota)
+  uint64 maxfiles = 9; // maximum number of files (inode quota)
   float percentageusedbytes = 10; // percentage of volume quota used from 0 to 100
   float percentageusedfiles = 11; // percentag of inode quota used from 0 to 100
-  string statusbytes = 12;       // status string for volume quota ok,warning,exceeded
-  string statusfiles = 13;       // status string for inode quota ok,warning,exceeded
+  string statusbytes = 12; // status string for volume quota ok,warning,exceeded
+  string statusfiles = 13; // status string for inode quota ok,warning,exceeded
 }
 
 message RoleId {
@@ -251,19 +270,18 @@ message FindRequest {
 }
 
 message ShareAuth {
- string prot = 1;
- string name = 2;
- string host = 3;
+  string prot = 1;
+  string name = 2;
+  string host = 3;
 }
-
 
 message ShareProto {
   string permission = 1;
-  uint64 expires    = 2;
-  string owner      = 3;
-  string group      = 4;
+  uint64 expires = 2;
+  string owner = 3;
+  string group = 4;
   uint64 generation = 5;
-  string path    = 6;
+  string path = 6;
   bool allowtree = 7;
   string vtoken = 8;
   repeated ShareAuth origins = 9;
@@ -314,15 +332,15 @@ message NSRequest {
 
   message VersionRequest {
     enum VERSION_CMD {
-     CREATE= 0;
-     PURGE = 1;
-     LIST = 2;
-     GRAB = 3;
-   }
-   MDId id = 1;
-   VERSION_CMD cmd = 2;
-   int32 maxversion = 3;
-   string grabversion = 4;
+      CREATE = 0;
+      PURGE = 1;
+      LIST = 2;
+      GRAB = 3;
+    }
+    MDId id = 1;
+    VERSION_CMD cmd = 2;
+    int32 maxversion = 3;
+    string grabversion = 4;
   }
 
   message RecycleRequest {
@@ -334,8 +352,8 @@ message NSRequest {
 
     enum RECYCLE_CMD {
       RESTORE = 0;
-      PURGE   = 1;
-      LIST    = 2;
+      PURGE = 1;
+      LIST = 2;
     }
 
     message RestoreFlags {
@@ -351,13 +369,13 @@ message NSRequest {
     }
 
     message ListFlags {
-      int32 maxentries    = 1;
-      int32 year          = 2;
-      int32 month         = 3;
-      int32 day           = 4;
-      int32 index         = 5;
+      int32 maxentries = 1;
+      int32 year = 2;
+      int32 month = 3;
+      int32 day = 4;
+      int32 index = 5;
       DisplayType display = 6;
-      string display_val  = 7;
+      string display_val = 7;
     }
 
     string key = 1;
@@ -390,7 +408,7 @@ message NSRequest {
     enum ACL_COMMAND {
       NONE = 0;
       MODIFY = 1;
-      LIST   = 2;
+      LIST = 2;
     }
 
     enum ACL_TYPE {
@@ -402,7 +420,7 @@ message NSRequest {
     ACL_COMMAND cmd = 2;
     bool recursive = 3;
     ACL_TYPE type = 4;
-    string rule    = 5;
+    string rule = 5;
     uint32 position = 6;
     bool sync_write = 7;
   }
@@ -423,20 +441,20 @@ message NSRequest {
   message ShareRequest {
     message LsShare {
       enum OutFormat {
-        NONE                  = 0; //
-        MONITORING            = 1; // [-m]
-        LISTING               = 2; // [-l]
-        JSON                  = 3; // [grpc]
+        NONE = 0; //
+        MONITORING = 1; // [-m]
+        LISTING = 2; // [-l]
+        JSON = 3; // [grpc]
       }
-    OutFormat outformat   = 1; //
-    string selection      = 2; //
+      OutFormat outformat = 1; //
+      string selection = 2; //
     }
 
     message OperateShare {
       enum Op {
         CREATE = 0;
         REMOVE = 1;
-        SHARE  = 2;
+        SHARE = 2;
         UNSHARE = 3;
         ACCESS = 4;
         MODIFY = 5;
@@ -450,7 +468,7 @@ message NSRequest {
     }
 
     oneof subcmd {
-      LsShare ls    = 1;
+      LsShare ls = 1;
       OperateShare op = 2;
     }
   }
@@ -460,27 +478,25 @@ message NSRequest {
 
   // Actual request data object
   oneof command {
-    MkdirRequest mkdir       = 21;
-    RmdirRequest rmdir       = 22;
-    TouchRequest touch       = 23;
-    UnlinkRequest unlink     = 24;
-    RmRequest rm             = 25;
-    RenameRequest rename     = 26;
-    SymlinkRequest symlink   = 27;
-    VersionRequest version   = 28;
-    RecycleRequest old_recycle   = 29;
-    SetXAttrRequest xattr    = 30;
-    ChownRequest chown       = 31;
-    ChmodRequest chmod       = 32;
-    AclRequest acl           = 33;
-    TokenRequest token       = 34;
-    QuotaRequest quota       = 35;
-    ShareRequest share       = 36;
+    MkdirRequest mkdir = 21;
+    RmdirRequest rmdir = 22;
+    TouchRequest touch = 23;
+    UnlinkRequest unlink = 24;
+    RmRequest rm = 25;
+    RenameRequest rename = 26;
+    SymlinkRequest symlink = 27;
+    VersionRequest version = 28;
+    RecycleRequest old_recycle = 29;
+    SetXAttrRequest xattr = 30;
+    ChownRequest chown = 31;
+    ChmodRequest chmod = 32;
+    AclRequest acl = 33;
+    TokenRequest token = 34;
+    QuotaRequest quota = 35;
+    ShareRequest share = 36;
     eos.console.RecycleProto recycle = 37;
   }
 }
-
-
 
 message NSResponse {
   message ErrorResponse {
@@ -490,8 +506,8 @@ message NSResponse {
 
   message VersionResponse {
     message VersionInfo {
-      MDId   id = 1;
-      Time   mtime = 2;
+      MDId id = 1;
+      Time mtime = 2;
     }
     int64 code = 1;
     string msg = 2;
@@ -503,10 +519,13 @@ message NSResponse {
     string msg = 2;
 
     message RecycleInfo {
-      enum DELETIONTYPE { FILE = 0;  TREE = 1; }
-      MDId   id = 1;
+      enum DELETIONTYPE {
+        FILE = 0;
+        TREE = 1;
+      }
+      MDId id = 1;
       RoleId owner = 2;
-      Time   dtime = 3;
+      Time dtime = 3;
       uint64 size = 4;
       DELETIONTYPE type = 5;
       string key = 6;
@@ -547,12 +566,12 @@ message NSResponse {
     repeated ShareAccess access = 4;
   }
 
-  ErrorResponse       error = 1;
-  VersionResponse     version = 2;
-  RecycleResponse     recycle = 3;
-  AclResponse         acl = 4;
-  QuotaResponse       quota = 5;
-  ShareResponse       share = 6;
+  ErrorResponse error = 1;
+  VersionResponse version = 2;
+  RecycleResponse recycle = 3;
+  AclResponse acl = 4;
+  QuotaResponse quota = 5;
+  ShareResponse share = 6;
 }
 
 message NsStatRequest {
