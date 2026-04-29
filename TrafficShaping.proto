@@ -92,6 +92,16 @@ message GroupRateEntry {
   repeated RateStats stats = 2;
 }
 
+message DetailedRateEntry {
+  string node_id = 1;
+  string app_name = 2;
+  uint32 uid = 3;
+  uint32 gid = 4;
+  // EOS filesystem id. 0 means aggregate / legacy reporting.
+  uint64 fsid = 5;
+  repeated RateStats stats = 6;
+}
+
 // --- Response Definition ---
 
 message TrafficShapingRateReport {
@@ -101,6 +111,7 @@ message TrafficShapingRateReport {
   repeated AppRateEntry app_stats = 2;
   repeated UserRateEntry user_stats = 3;
   repeated GroupRateEntry group_stats = 4;
+  repeated DetailedRateEntry detailed_stats = 5;
 }
 
 /*
@@ -165,6 +176,8 @@ message TrafficShapingRateRequest {
     ENTITY_APP = 1;
     ENTITY_UID = 2;
     ENTITY_GID = 3;
+    // Per node/app/uid/gid/fsid. High cardinality; request explicitly.
+    ENTITY_DETAILED = 4;
   }
   repeated EntityType include_types = 2;
 
@@ -190,6 +203,7 @@ message TrafficShapingRateResponse {
   repeated AppRateEntry app_stats = 2;
   repeated UserRateEntry user_stats = 3;
   repeated GroupRateEntry group_stats = 4;
+  repeated DetailedRateEntry detailed_stats = 5;
 
   // These are min/max/mean calculated over a window set by system_stats_time_window_seconds
   ThreadLoopStats fst_limits_update_thread_loop_stats = 9;
