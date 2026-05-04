@@ -34,8 +34,7 @@ message IoStatEntry {
   uint64 total_read_ops = 7;
   uint64 total_write_ops = 8;
 
-  // Optional EOS filesystem id. 0 means aggregate / legacy reporting.
-  uint64 fsid = 9;
+  uint32 fsid = 9;
 }
 
 // The heartbeat message sent every 1 second by every Storage Node.
@@ -97,8 +96,7 @@ message DetailedRateEntry {
   string app_name = 2;
   uint32 uid = 3;
   uint32 gid = 4;
-  // EOS filesystem id. 0 means aggregate / legacy reporting.
-  uint64 fsid = 5;
+  uint32 fsid = 5;
   repeated RateStats stats = 6;
 }
 
