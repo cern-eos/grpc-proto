@@ -486,7 +486,9 @@ message NSRequest {
     RenameRequest rename = 26;
     SymlinkRequest symlink = 27;
     VersionRequest version = 28;
-    RecycleRequest old_recycle = 29;
+    // Deprecated: use recycle = 37 (eos.console.RecycleProto) instead.
+    // Supports only RESTORE, PURGE, LIST; missing config/project sub-commands.
+    RecycleRequest old_recycle = 29 [deprecated = true];
     SetXAttrRequest xattr = 30;
     ChownRequest chown = 31;
     ChmodRequest chmod = 32;
