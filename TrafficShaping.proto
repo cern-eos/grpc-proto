@@ -206,6 +206,7 @@ message TrafficShapingRateResponse {
   // These are min/max/mean calculated over a window set by system_stats_time_window_seconds
   ThreadLoopStats fst_limits_update_thread_loop_stats = 9;
   ThreadLoopStats estimators_update_thread_loop_stats = 10;
+  ThreadLoopStats reservation_controller_update_thread_loop_stats = 11;
 }
 
 message ThreadConfig {
