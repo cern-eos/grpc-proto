@@ -18,6 +18,7 @@ message RecycleProto {
     int32 Maxentries    = 5;
     RecycleType Type    = 6;
     string RecycleId    = 7;
+    string Path         = 8;
   }
 
   message PurgeProto {
