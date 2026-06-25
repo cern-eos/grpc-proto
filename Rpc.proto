@@ -285,6 +285,7 @@ message ShareProto {
   bool allowtree = 7;
   string vtoken = 8;
   repeated ShareAuth origins = 9;
+  repeated string scopes = 10;
 }
 
 message ShareToken {
