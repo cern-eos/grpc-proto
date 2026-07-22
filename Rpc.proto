@@ -21,6 +21,7 @@ syntax = "proto3";
 
 package eos.rpc;
 
+import "File.proto";
 import "Recycle.proto";
 import "TrafficShaping.proto";
 
@@ -498,6 +499,7 @@ message NSRequest {
     QuotaRequest quota = 35;
     ShareRequest share = 36;
     eos.console.RecycleProto recycle = 37;
+    eos.console.FileProto file = 38;
   }
 }
 
@@ -569,12 +571,18 @@ message NSResponse {
     repeated ShareAccess access = 4;
   }
 
+  message FileResponse {
+    int64 code = 1;
+    string msg = 2;
+  }
+
   ErrorResponse error = 1;
   VersionResponse version = 2;
   RecycleResponse recycle = 3;
   AclResponse acl = 4;
   QuotaResponse quota = 5;
   ShareResponse share = 6;
+  FileResponse file = 7;
 }
 
 message NsStatRequest {
