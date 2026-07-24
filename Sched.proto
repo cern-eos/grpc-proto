@@ -1,0 +1,78 @@
+syntax="proto3";
+
+package eos.console;
+
+option go_package = "eos.rest.gateway.service";
+
+message SchedProto {
+  message TypeProto {
+    // This could be an enum like PlacementStrategyT; but every time we
+    // introduce a new scheduler, we'd have to modify the cli instead of just
+    // parsing on the server side
+    string schedtype = 1;
+  }
+
+  message WeightProto {
+    sint32 id = 1;
+    uint32 weight = 2;
+    string spacename = 3;
+  }
+
+  message ShowProto {
+    enum Option {
+      TYPE = 0;
+      STATE = 1;
+    }
+
+    Option option = 1;
+    string spacename = 2;
+  }
+
+  message RefreshProto {
+  }
+
+  message DisabledProto {
+    enum Op {
+      ADD = 0;
+      RM  = 1;
+      LS  = 2;
+    }
+
+    enum OpType {
+      ALL    = 0;
+      PLCT   = 1;
+      ACCESS = 2;
+    }
+
+    Op op = 1;
+    string spacename = 2;
+    string geotag = 3;
+    OpType optype = 4;
+  }
+
+  message ConfigureProto {
+    oneof subopt {
+      TypeProto type = 1;
+      WeightProto weight = 2;
+      ShowProto show = 3;
+      RefreshProto refresh = 4;
+    }
+  }
+
+  message LsProto {
+    enum Option {
+      BUCKET = 0;
+      DISK   = 1;
+      ALL    = 2;
+    }
+
+    Option option = 1;
+    string spacename = 2;
+  }
+
+  oneof subcmd {
+    ConfigureProto config = 1;
+    LsProto ls = 2;
+    DisabledProto disabled = 3;
+  }
+}
