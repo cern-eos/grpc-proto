@@ -37,6 +37,15 @@ message IoStatEntry {
   uint32 fsid = 9;
 }
 
+message FstIoActuatorStats {
+  uint64 read_wait_events = 1;
+  uint64 write_wait_events = 2;
+  uint64 read_wait_microseconds = 3;
+  uint64 write_wait_microseconds = 4;
+  uint64 read_active_waiters = 5;
+  uint64 write_active_waiters = 6;
+}
+
 // The heartbeat message sent every 1 second by every Storage Node.
 message FstIoReport {
   // --- Metadata ---
@@ -49,6 +58,7 @@ message FstIoReport {
   // --- Payload ---
   // List of streams that have activity. Idle streams are omitted to save bandwidth.
   repeated IoStatEntry entries = 4;
+  FstIoActuatorStats actuator_stats = 5;
 }
 
 message MgmIoResponse {
@@ -141,7 +151,8 @@ message TrafficShapingPolicyConfig {
 }
 
 message TrafficShapingFstIoDelayConfig {
-  // mapp uid / gid / app to delay in microseconds
+  // Map uid / gid / app to the legacy per-MiB delay in microseconds.
+  // These fields remain populated during rolling upgrades.
   map<uint32, uint64> uid_read_delay = 1;
   map<uint32, uint64> uid_write_delay = 2;
 
@@ -150,6 +161,17 @@ message TrafficShapingFstIoDelayConfig {
 
   map<string, uint64> app_read_delay = 5;
   map<string, uint64> app_write_delay = 6;
+
+  // Node-local byte-rate assignments. New FSTs prefer these shared rate
+  // actuators over the legacy independent per-request delays.
+  map<uint32, uint64> uid_read_rate = 7;
+  map<uint32, uint64> uid_write_rate = 8;
+
+  map<uint32, uint64> gid_read_rate = 9;
+  map<uint32, uint64> gid_write_rate = 10;
+
+  map<string, uint64> app_read_rate = 11;
+  map<string, uint64> app_write_rate = 12;
 }
 
 // GRPC methods
