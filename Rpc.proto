@@ -318,6 +318,7 @@ message NSRequest {
     MDId id = 1;
     bool recursive = 2;
     bool norecycle = 3;
+    bool noglobbing = 4;
   }
 
   message RenameRequest {
