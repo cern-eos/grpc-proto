@@ -38,16 +38,15 @@ message SchedProto {
       LS  = 2;
     }
 
-    enum OpType {
-      ALL    = 0;
-      PLCT   = 1;
-      ACCESS = 2;
-    }
+    reserved 4;             // was OpType optype, superseded by spec below
 
     Op op = 1;
     string spacename = 2;
     string geotag = 3;
-    OpType optype = 4;
+    // Operations to deny below the branch. The legacy "plct", "access" and
+    // "all" are kept as aliases of the wider grammar the MGM parses, see
+    // eos::mgm::placement::ParseDeniedSpec. Empty means "all".
+    string spec = 5;
   }
 
   message ConfigureProto {
