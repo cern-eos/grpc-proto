@@ -7,7 +7,7 @@ syntax = "proto3";
 
 package eos.traffic_shaping;
 
-option go_package = "eos_traffic_shaping_monitor/proto";
+option go_package = "github.com/cern-eos/go-eosgrpc/trafficshaping";
 
 // Represents the I/O stats for a single "Stream" (Unique App/UID/GID combo).
 // This is only sent if the counters have changed since the last report.

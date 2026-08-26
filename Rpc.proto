@@ -25,7 +25,7 @@ import "File.proto";
 import "Recycle.proto";
 import "TrafficShaping.proto";
 
-option go_package = "go-eosgrpc";
+option go_package = "github.com/cern-eos/go-eosgrpc";
 option java_multiple_files = true;
 option java_outer_classname = "EosProto";
 option java_package = "io.grpc.eos.rpc";

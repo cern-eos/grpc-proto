@@ -10,7 +10,7 @@ package eos.console;
 import "Metadata.proto";
 import "Authentication.proto";
 
-option go_package = "eos.rest.gateway.service";
+option go_package = "github.com/cern-eos/go-eosgrpc/console";
 
 message FileProto {
   Metadata md            = 1;

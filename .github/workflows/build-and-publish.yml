@@ -35,8 +35,9 @@ jobs:
           cd go-eosgrpc
           git config user.email "cbox@cern.ch"
           git config user.name "cernbox-bot"
-          cp ../grpc-proto/build/*.go .
-          git add .
+          find . -name '*.pb.go' -not -path './.git/*' -delete
+          cp -r ../grpc-proto/build/. .
+          git add -A
           push=1
           git commit -m "Synced to https://github.com/cern-eos/grpc-proto/tree/${{ github.sha }}" || push=0
           if [ $push -eq 1 ]; then

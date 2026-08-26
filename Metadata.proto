@@ -6,7 +6,7 @@ syntax="proto3";
 
 package eos.console;
 
-option go_package = "eos.rest.gateway.service";
+option go_package = "github.com/cern-eos/go-eosgrpc/console";
 
 enum TYPE {
   FILE = 0;
