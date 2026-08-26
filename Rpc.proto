@@ -338,6 +338,7 @@ message NSRequest {
       PURGE = 1;
       LIST = 2;
       GRAB = 3;
+      CREATE_FOLDER = 4;
     }
     MDId id = 1;
     VERSION_CMD cmd = 2;

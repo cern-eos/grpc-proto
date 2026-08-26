@@ -121,6 +121,7 @@ message FileVerifyProto {
 
 message FileVersionProto {
   int32 purge_version = 1;
+  bool create_folder  = 2;
 }
 
 message FileVersionsProto {
