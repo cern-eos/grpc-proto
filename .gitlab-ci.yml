@@ -1,0 +1,25 @@
+---
+stages:
+  - vet
+
+# Generate the Go bindings and type-check them. This catches name collisions
+# between proto files that land in the same Go package.
+vet-generated-go:
+  stage: vet
+  image: golang:1.26
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+  variables:
+    BUF_VERSION: v1.47.2
+  script:
+    # Keep GOPATH out of the project dir, otherwise buf reads the .proto files
+    # in the module cache as input.
+    - curl -sSLf "https://github.com/bufbuild/buf/releases/download/$BUF_VERSION/buf-Linux-x86_64" -o /usr/local/bin/buf
+    - chmod +x /usr/local/bin/buf
+    - buf generate
+    # The module path must match the go_package prefix in buf.gen.yaml.
+    - cd build
+    - go mod init github.com/cern-eos/go-eosgrpc
+    - go mod tidy
+    - go vet ./...
