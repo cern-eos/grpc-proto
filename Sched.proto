@@ -63,6 +63,7 @@ message SchedProto {
       BUCKET = 0;
       DISK   = 1;
       ALL    = 2;
+      TREE   = 3;
     }
 
     Option option = 1;
