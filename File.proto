@@ -58,6 +58,8 @@ message FileConvertProto {
   bool sync               = 4;
   bool rewrite            = 5;
   string checksum         = 6;
+  bool compress           = 7;
+  bool uncompress         = 8;
 }
 
 message FileCopyProto {
