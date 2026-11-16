@@ -37,7 +37,13 @@ message FileProto {
     FileRenameWithSymlinkProto rename_with_symlink = 21;
     FileinfoProto fileinfo                         = 22;
     TouchProto touch                               = 23;
+    FileSearchProto search                         = 24;
   }
+}
+
+message FileSearchProto {
+  string query = 1;
+  uint32 limit = 2;
 }
 
 message FileAdjustreplicaProto {
