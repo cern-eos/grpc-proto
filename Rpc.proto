@@ -35,6 +35,11 @@ service Eos {
   // Replies to a ping
   rpc Ping(PingRequest) returns (PingReply) {}
 
+  // Read-only Model Context Protocol endpoint for administration.
+  // The body fields are JSON-RPC documents. The server exposes status
+  // inspection and allowlisted log reads and rejects every other method.
+  rpc Mcp(McpRequest) returns (McpReply) {}
+
   // Replies to a notification
   rpc Notify(NotificationRequest) returns (NotificationResponse) {}
 
@@ -70,6 +75,18 @@ message PingRequest {
 
 message PingReply {
   bytes message = 1;
+}
+
+message McpRequest {
+  string authkey = 1;
+  // Raw MCP JSON-RPC request document.
+  string body = 2;
+}
+
+message McpReply {
+  // Raw MCP JSON-RPC response document. Empty when notification is true.
+  string body = 1;
+  bool notification = 2;
 }
 
 message NotificationRequest {
